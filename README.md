@@ -1,9 +1,8 @@
-# Hello Bluetooth
+# Bluetooth Rate Meter using a BBC MicroBit
 
-This is a simple swift app that demonstrates very basic bi-directional communication with an Arduino via bluetooth. It is designed to work out-of-the-box with an [Arduino 101](https://www.arduino.cc/en/Main/ArduinoBoard101) running the `ButtonLED` example project.
-
-You can read more about this project [on my medium post](https://medium.com/@nebsp/hello-bluetooth-a-simple-swift-app-for-communicating-with-an-arduino-bbf26e089999).  
+This is a simple swift app that enables bi-directional communication with an BBC: Microbit via bluetooth.  It requires the original firmware that comes with the Microbit.  If you have flashed your Microbic with code written on any of the code editors you will have replaced the firmware with an older version that does not implement all of the bluetooth capabilities used in this project.  You can get the original firmware and some additional information on the bluetooth capabilities of the Microbit at https://lancaster-university.github.io/microbit-docs/ble/profile/#bbc-microbit-bluetooth-profile
+ 
 
 ## Setup
 
-Simply connect a push button to pin 4 on your Arduino 101 an upload the `ButtonLED` sketch to it. While the Arduino is running, launch the `HelloBluetooth` iOS app on a device. You can then play with the push button or the button in the iOS app.
+Flash the Microbic with the original firmware (see above) and pair your phone with the Microbit.  Load the app on your IOS device and launch it.  It should automatically use the paired microbit advertised services to provide a stroke rate and x/y/z accelerometer data
