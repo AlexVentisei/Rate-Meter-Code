@@ -22,7 +22,7 @@ protocol StrokeMeterIODelegate: class {
 
 class StrokeMeterIO: NSObject {
     
-    let serviceUUID: String
+    let serviceUUID: CBUUID
     weak var delegate: StrokeMeterIODelegate?
 
     var centralManager: CBCentralManager!
@@ -33,7 +33,7 @@ class StrokeMeterIO: NSObject {
     var AccelerometerDataCharacteristic: CBCharacteristic?
 
     init(serviceUUID: String, delegate: StrokeMeterIODelegate?) {
-        self.serviceUUID = serviceUUID
+        self.serviceUUID = CBUUID(string: serviceUUID)
         self.delegate = delegate
 
         super.init()
@@ -57,8 +57,13 @@ extension StrokeMeterIO: CBCentralManagerDelegate {
         peripheral.discoverServices(nil)
     }
 
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?){
+        centralManager.scanForPeripherals(withServices: nil, options: nil)
+
+    }
+    
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if peripheral.name == "BBC micro:bit" {
+        if peripheral.name == "BBC micro:bit"{
             connectedPeripheral = peripheral
 
             if let connectedPeripheral = connectedPeripheral {
@@ -72,12 +77,6 @@ extension StrokeMeterIO: CBCentralManagerDelegate {
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
-            /* Puting the service ID's in the scanFoPeripheral Call does not work so scan for all peripherals
-             
-             [CBUUID(string: serviceUUID),
-            CBUUID(string: "e95d93b0-251d-470a-a062-fa1922dfa9a8"),
-            CBUUID(string: "e95d0000-251d-470a-a062-fa1922dfa9a8"),
-            CBUUID(string: "e95dfb24-251d-470a-a062-fa1922dfa9a8")]*/
             centralManager.scanForPeripherals(withServices: nil, options: nil)
         }
     }
@@ -89,9 +88,13 @@ extension StrokeMeterIO: CBPeripheralDelegate {
             return
         }
 
-        targetService = services.last
+        for s in services {
+            if s.uuid == self.serviceUUID {
+                targetService = s
+            }
+        }
         targetServices = services
-        if let service = services.last {
+        if let service = targetService {
             targetService = service
             peripheral.discoverCharacteristics(nil, for: service)
         }
