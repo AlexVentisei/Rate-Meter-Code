@@ -64,13 +64,42 @@ class StrokeMeterIO: NSObject {
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
 
-    func writeValue(_ value: Int8) {
-        guard let peripheral = connectedPeripheral, let characteristic = AccelerometerPeriodCharacteristic else {
+    func writeValue<T>(_ characteristic: CBCharacteristic, value: T) {
+        guard let peripheral = connectedPeripheral else {
             return
         }
 
         let data = NSData.dataWithValue(value: value)
         peripheral.writeValue(data as Data, for: characteristic, type: .withResponse)
+    }
+    
+    func writePinValue<T>(value: T) {
+        guard let peripheral = connectedPeripheral else {
+            return
+        }
+        
+        let setAllOn: [[UInt8]] = [[0x00,0x01],  //temp to test if the write works  TODO interpret the value to the pin settings
+            [0x01,0x01],
+            [0x02,0x01],
+            [0x03,0x01],
+            [0x04,0x01],
+            [0x05,0x01],
+            [0x06,0x01],
+            [0x07,0x01],
+            [0x08,0x01],
+            [0x09,0x01],
+            [0x0a,0x01],
+            [0x0b,0x01],
+            [0x0c,0x01],
+            [0x0d,0x01],
+            [0x0e,0x01],
+            [0x0f,0x01],
+            [0x10,0x01],
+            [0x11,0x01],]
+        
+        let data = NSData.dataWithValue(value: setAllOn)
+        peripheral.writeValue(data as Data, for: pinDataCharacteristic!, type: .withResponse)
+        
     }
 
 }
@@ -136,15 +165,24 @@ extension StrokeMeterIO: CBPeripheralDelegate {
         guard let characteristics = service.characteristics else {
             return
         }
+        
+        let setToDigital: UInt32 = 0x00
+        let setToWrite: UInt32 = 0x00
 
+        
         for characteristic in characteristics {
             switch characteristic.uuid{
                 case ACCELEROMETERPERIOD_CHARACTERISTIC_UUID : AccelerometerPeriodCharacteristic = characteristic
-                case ACCELEROMETERDATA_CHARACTERISTIC_UUID : self.AccelerometerDataCharacteristic = characteristic;
+                
+                case ACCELEROMETERDATA_CHARACTERISTIC_UUID : AccelerometerDataCharacteristic = characteristic;
                     peripheral.setNotifyValue(true, for: characteristic)
-                case PINDATA_CHARACTERISTIC_UUID : pinDataCharacteristic = characteristic
-                case PINADCONFIGURATION_CHARACTERISTIC_UUID : pinADCharacteristic = characteristic
-                case PINIOCONFIGURATION_CHARACTERISTIC_UUID : pinIOCharacteristic = characteristic
+                
+                case PINDATA_CHARACTERISTIC_UUID : pinDataCharacteristic = characteristic;
+
+                case PINADCONFIGURATION_CHARACTERISTIC_UUID : pinADCharacteristic = characteristic;
+                    self.writeValue(pinADCharacteristic!, value: setToDigital);
+                case PINIOCONFIGURATION_CHARACTERISTIC_UUID : pinIOCharacteristic = characteristic;
+                    self.writeValue(pinIOCharacteristic!, value: setToWrite);
                 case LEDMATRIXSTATE_CHARACTERISTIC_UUID : ledMatrixStateCharacteristic = characteristic
                 case LEDTEXT_CHARACTERISTIC_UUID : ledTextCharacteristic = characteristic
                 case SCROLLINGDELAY_CHARACTERISTIC_UUID : scrollingDelayCharacteristic = characteristic

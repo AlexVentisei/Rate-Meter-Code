@@ -83,8 +83,10 @@ extension ViewController: StrokeMeterIODelegate {
             strokeTimePoint2 = Date()
             strokeInterval = strokeTimePoint2.timeIntervalSince(strokeTimePoint1)
             if strokeInterval > Double(2) {
+                let strokeRate = 60/strokeInterval
                 strokeTimePoint1 = Date()
-                strokeRateLabel.text = String(format: "%.1f", 60/strokeInterval)
+                strokeRateLabel.text = String(format: "%.1f", strokeRate)
+                StrokeMeter.writePinValue(value: strokeRate);
             }
         }
       
