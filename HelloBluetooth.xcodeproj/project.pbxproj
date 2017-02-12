@@ -13,6 +13,7 @@
 		80106FB61C94CE4C00B5BB19 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 80106FB51C94CE4C00B5BB19 /* ViewController.xib */; };
 		80106FB81C94D02F00B5BB19 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 80106FB71C94D02F00B5BB19 /* LaunchScreen.xib */; };
 		804F20701C96329A00B6600F /* StrokeMeterIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804F206F1C96329A00B6600F /* StrokeMeterIO.swift */; };
+		DA38DE221E4460E200E3BB5A /* DataExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA38DE211E4460E200E3BB5A /* DataExtention.swift */; };
 		DAE5209F1D99A037001F981F /* NSData+Int8.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE5209E1D99A037001F981F /* NSData+Int8.swift */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +26,7 @@
 		80106FB51C94CE4C00B5BB19 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
 		80106FB71C94D02F00B5BB19 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		804F206F1C96329A00B6600F /* StrokeMeterIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrokeMeterIO.swift; sourceTree = "<group>"; };
+		DA38DE211E4460E200E3BB5A /* DataExtention.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataExtention.swift; sourceTree = "<group>"; };
 		DAE5209E1D99A037001F981F /* NSData+Int8.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+Int8.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -61,6 +63,7 @@
 				80106FA31C94CDA500B5BB19 /* AppDelegate.swift */,
 				804F206F1C96329A00B6600F /* StrokeMeterIO.swift */,
 				DAE5209E1D99A037001F981F /* NSData+Int8.swift */,
+				DA38DE211E4460E200E3BB5A /* DataExtention.swift */,
 				80106FA51C94CDA500B5BB19 /* ViewController.swift */,
 				80106FB51C94CE4C00B5BB19 /* ViewController.xib */,
 				80106FAA1C94CDA500B5BB19 /* Assets.xcassets */,
@@ -143,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA38DE221E4460E200E3BB5A /* DataExtention.swift in Sources */,
 				80106FA61C94CDA500B5BB19 /* ViewController.swift in Sources */,
 				DAE5209F1D99A037001F981F /* NSData+Int8.swift in Sources */,
 				804F20701C96329A00B6600F /* StrokeMeterIO.swift in Sources */,

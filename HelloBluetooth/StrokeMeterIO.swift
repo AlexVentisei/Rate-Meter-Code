@@ -73,38 +73,46 @@ class StrokeMeterIO: NSObject {
         peripheral.writeValue(data as Data, for: characteristic, type: .withResponse)
     }
     
-    func writePinValue<T>(value: T) {
+    func writePinValue(strokeRate: Double) {
         guard let peripheral = connectedPeripheral else {
             return
         }
         
-        let setAllOn: [[UInt8]] = [[0x00,0x01],  //temp to test if the write works  TODO interpret the value to the pin settings
-            [0x01,0x01],
-            [0x02,0x01],
-            [0x03,0x01],
-            [0x04,0x01],
-            [0x05,0x01],
-            [0x06,0x01],
-            [0x07,0x01],
-            [0x08,0x01],
-            [0x09,0x01],
-            [0x0a,0x01],
-            [0x0b,0x01],
-            [0x0c,0x01],
-            [0x0d,0x01],
-            [0x0e,0x01],
-            [0x0f,0x01],
-            [0x10,0x01],
-            [0x11,0x01],]
+        let strokeRateIntDec: UInt8 = UInt8(strokeRate/10)
+        var strokeRateIntUnit: UInt8
+        strokeRateIntUnit = UInt8(UInt8(strokeRate)-strokeRateIntDec*10)
+
+        let pin11Mask: UInt8 = 0b00000001
+        let pin5Mask: UInt8 = 0b00000010
+        let pin9Mask: UInt8 = 0b00000100
+        let pin12Mask: UInt8 = 0b00000001
+        let pin15Mask: UInt8 = 0b00000010
+        let pin14Mask: UInt8 = 0b00000100
+        let pin2Mask: UInt8 = 0b00001000
         
-        let data = NSData.dataWithValue(value: setAllOn)
-        peripheral.writeValue(data as Data, for: pinDataCharacteristic!, type: .withResponse)
+        let pin11: UInt8 = (strokeRateIntDec & pin11Mask)
+        let pin5: UInt8 = (strokeRateIntDec & pin5Mask) >> 1
+        let pin9: UInt8 = (strokeRateIntDec & pin9Mask) >> 2
+        
+        let pin12: UInt8 = (strokeRateIntUnit & pin12Mask)
+        let pin15: UInt8 = (strokeRateIntUnit & pin15Mask) >> 1
+        let pin14: UInt8 = (strokeRateIntUnit & pin14Mask) >> 2
+        let pin2: UInt8 = (strokeRateIntUnit & pin2Mask) >> 3
+
+        
+        let setAllOn: [[UInt8]] = [[0x0b,pin11],[0x09, pin9],[0x05, pin5],[0x0c,pin12],[0x0f,pin15],[0x0e,pin14],[0x02,pin2]]
+        
+        let data = Data.dataWithArray(value: setAllOn)
+        peripheral.writeValue(data, for: pinDataCharacteristic!, type: .withResponse)
         
     }
 
 }
 
 extension StrokeMeterIO: CBCentralManagerDelegate {
+    
+    
+    
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         peripheral.discoverServices(nil)
     }
@@ -135,6 +143,12 @@ extension StrokeMeterIO: CBCentralManagerDelegate {
 }
 
 extension StrokeMeterIO: CBPeripheralDelegate {
+    
+    func centralManger(_ peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: Error?) {
+        //this function traps any errors in the writing to the characteristics
+    }
+    
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else {
             return
@@ -178,11 +192,12 @@ extension StrokeMeterIO: CBPeripheralDelegate {
                     peripheral.setNotifyValue(true, for: characteristic)
                 
                 case PINDATA_CHARACTERISTIC_UUID : pinDataCharacteristic = characteristic;
-
                 case PINADCONFIGURATION_CHARACTERISTIC_UUID : pinADCharacteristic = characteristic;
                     self.writeValue(pinADCharacteristic!, value: setToDigital);
+                
                 case PINIOCONFIGURATION_CHARACTERISTIC_UUID : pinIOCharacteristic = characteristic;
                     self.writeValue(pinIOCharacteristic!, value: setToWrite);
+                
                 case LEDMATRIXSTATE_CHARACTERISTIC_UUID : ledMatrixStateCharacteristic = characteristic
                 case LEDTEXT_CHARACTERISTIC_UUID : ledTextCharacteristic = characteristic
                 case SCROLLINGDELAY_CHARACTERISTIC_UUID : scrollingDelayCharacteristic = characteristic

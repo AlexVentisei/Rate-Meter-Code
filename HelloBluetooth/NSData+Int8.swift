@@ -6,6 +6,7 @@ extension NSData {
         var variableValue = value
         return NSData(bytes: &variableValue, length: MemoryLayout<T>.size)
     }
+    
 
     func convertValueX() -> Int16 {
         var value_x: Int16 = 0

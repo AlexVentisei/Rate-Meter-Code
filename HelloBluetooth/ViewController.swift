@@ -13,6 +13,8 @@ class ViewController: UIViewController {
     var strokeTimePoint1 = Date()
     var strokeTimePoint2 = Date()
     var strokeInterval = TimeInterval()
+    var lastResultantForce: Double = 0.0
+    
 
 
     @IBOutlet weak var xValueLabel: UILabel!
@@ -20,7 +22,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var zValueLabel: UILabel!
     @IBOutlet weak var resultantForceLabel: UILabel!
     @IBOutlet weak var strokeRateLabel: UILabel!
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,18 +79,20 @@ extension ViewController: StrokeMeterIODelegate {
         zValueLabel.text = String(format: "%.0f", zAverage)
         
         resultantForce = sqrt(pow(xAverage,2) + pow(yAverage,2))
+        let deltaForce = lastResultantForce - resultantForce
         resultantForceLabel.text = String(format: "%.0f", resultantForce)
         
-        if resultantForce > forceTriggerPoint {
+        if deltaForce > forceTriggerPoint {
             strokeTimePoint2 = Date()
             strokeInterval = strokeTimePoint2.timeIntervalSince(strokeTimePoint1)
-            if strokeInterval > Double(2) {
+            if strokeInterval > Double(1) {
                 let strokeRate = 60/strokeInterval
                 strokeTimePoint1 = Date()
                 strokeRateLabel.text = String(format: "%.1f", strokeRate)
-                StrokeMeter.writePinValue(value: strokeRate);
+                StrokeMeter.writePinValue(strokeRate: strokeRate);
             }
         }
+        lastResultantForce = resultantForce
       
         
     }
