@@ -79,10 +79,10 @@ extension ViewController: StrokeMeterIODelegate {
         zValueLabel.text = String(format: "%.0f", zAverage)
         
         resultantForce = sqrt(pow(xAverage,2) + pow(yAverage,2))
-        let deltaForce = lastResultantForce - resultantForce
-        resultantForceLabel.text = String(format: "%.0f", resultantForce)
+     //   let deltaForce = lastResultantForce - resultantForce
+     //   resultantForceLabel.text = String(format: "%.0f", resultantForce)
         
-        if deltaForce > forceTriggerPoint {
+        if resultantForce > forceTriggerPoint {
             strokeTimePoint2 = Date()
             strokeInterval = strokeTimePoint2.timeIntervalSince(strokeTimePoint1)
             if strokeInterval > Double(1) {
